@@ -1,85 +1,225 @@
 using System;
-public class HelloWorld {
-    
-    public static void Main(string[] args) {
-        Random rand = new Random();
-
-        char[,] board = new char[3,3];
-        int steps = 1, i, j;
-
-        for(i=0;i<3;i++){
-            for(j=0;j<3;j++){
-                board[i,j] = '-';
+public class InsertDefaultValue{
+    public void AddValue(char[,] board)
+    {
+        int i,j;
+        
+for (i=0;i<3;i++
+)
+        {
+            for (j=0;j<3;j++)
+            {
+                board[i,j]='-';
             }
         }
+    }
+}
 
-        Console.WriteLine("Current Empty Places");
-
-        for(i=0;i<3;i++){
-            for(j=0;j<3;j++){
+public class ShowMatrix{
+    public void showboard(char[,] board)
+    {
+        int i,j;
+        for(i=0;i<3;i++)
+        {
+            for (j=0;j<3;j++)
+            {
                 Console.Write("|"+board[i,j]);
             }
-            Console.Write("|");
-            Console.WriteLine();
+            Console.WriteLine("|");
+        }
+    }
+}
+
+public class UserInput{
+    public void ShowUserInput(char[,] board,int user)
+    {
+        int row,col;
+        row = (user-1)/3;
+        col = (user-1)%3;
+        board[row,col] = 'X';
+    }
+}
+
+public class ComputerInput{
+    public void ShowComputerInput(char[,] board,int computer)
+    {
+        int row,col;
+        row=(computer-1)/3;
+        col=(computer-1)%3;
+        board[row,col]='O';
+    }
+}
+
+public class RemainingSpaces{
+    public int ShowSpaces(char[,] board,int[] RemainingPlaces)
+    {
+        int i,j,index=0;
+        for(i=0;i<3;i++)
+        {
+            for (j=0;j<3;j++)
+            {
+                if (board[i,j]=='-')
+                {
+                    RemainingPlaces[index]=(i*3)+j+1;
+                    index++;
+                }
+            }
+        }
+        for (i=0;i<index;i++)
+        {
+            Console.Write(RemainingPlaces[i]+" ");
+        }
+        return index;
+    }
+}
+
+public class Winner
+{
+    public bool CheckWinner(char[,] board)
+    {
+        if ((board[0,0]=='X' && board[0,1]=='X' && board[0,2]=='X') ||
+            (board[1,0]=='X' && board[1,1]=='X' && board[1,2]=='X') ||
+            (board[2,0]=='X' && board[2,1]=='X' && board[2,2]=='X')){
+            Console.WriteLine("*** You Win! Computer Loses! ***");
+            return true;
         }
 
-        Console.WriteLine();
+        if ((board[0,0]=='X' && board[1,0]=='X' && board[2,0]=='X') ||
+            (board[0,1]=='X' && board[1,1]=='X' && board[2,1]=='X') ||
+            (board[0,2]=='X' && board[1,2]=='X' && board[2,2]=='X')){
+            Console.WriteLine("*** You Win! Computer Loses! ***");
+            return true;
+        }
 
-        while(steps <= 9){
-            int user, computer;
-            bool flag = true;
-            Console.WriteLine("Select the place between 1 to 9");
-            Console.WriteLine();
-            
-            Console.Write("Enter Selected Place:- ");
-            if(!int.TryParse(Console.ReadLine(), out user) || user<=0 || user>=9){
-                flag = false;
-                while(flag == false){
+        if ((board[0,0]=='X' && board[1,1]=='X' && board[2,2]=='X') ||
+            (board[0,2]=='X' && board[1,1]=='X' && board[2,0]=='X')){
+            Console.WriteLine("*** You Win! Computer Loses! ***");
+            return true;
+        }
+
+        if ((board[0,0]=='O' && board[0,1]=='O' && board[0,2]=='O') ||
+            (board[1,0]=='O' && board[1,1]=='O' && board[1,2]=='O') ||
+            (board[2,0]=='O' && board[2,1]=='O' && board[2,2]=='O')){
+            Console.WriteLine("*** Computer Wins! You Lose! ***");
+            return true;
+        }
+
+        if ((board[0,0]=='O' && board[1,0]=='O' && board[2,0]=='O') ||
+            (board[0,1]=='O' && board[1,1]=='O' && board[2,1]=='O') ||
+            (board[0,2]=='O' && board[1,2]=='O' && board[2,2]=='O')){
+            Console.WriteLine("*** Computer Wins! You Lose! ***");
+            return true;
+        }
+
+        if ((board[0,0]=='O' && board[1,1]=='O' && board[2,2]=='O') ||
+            (board[0,2]=='O' && board[1,1]=='O' && board[2,0]=='O')){
+            Console.WriteLine("*** Computer Wins! You Lose! ***");
+            return true;
+        }
+        return false;
+    }
+}
+
+public class HelloWorld
+{
+    public static void Main(string[] args)
+    {
+        Random rand = new Random();
+
+        char[,] board = new char[3, 3
+];
+        int[] RemainingPlaces = new int[9];
+
+        InsertDefaultValue DefultValue = new InsertDefaultValue();
+        DefultValue.AddValue(board);
+
+        ShowMatrix boardplaces = new ShowMatrix();
+        RemainingSpaces EmptySpaces = new RemainingSpaces();
+        UserInput UserSelection = new UserInput();
+        ComputerInput ComputerSelection = new ComputerInput();
+        Winner gameChecker = new Winner(); 
+
+        Console.WriteLine("Current Empty Places");
+        boardplaces.showboard(board);
+
+        int moves = 0;
+        bool userTurn = true;
+        bool gameOver = false;
+
+        while (moves < 9 && !gameOver)
+        {
+            if (userTurn)
+            {
+                int user;
+                while (true)
+                {
+                    int row,col;
+                    Console.Write("\nSelect the place between:- ");
+                    EmptySpaces.ShowSpaces(board, RemainingPlaces);
+                    Console.Write("\n\nSelected Place:- ");
+
+                    string input = Console.ReadLine();
                     Console.WriteLine();
-                    Console.WriteLine("You Must Select between 1 to 9!");
-                    Console.Write("Selected Postion Again:- ");
-                    if (!int.TryParse(Console.ReadLine(), out user) || user<=0 || user>=9){
-                        flag = true;
+                    if (!int.TryParse(input, out user) || user < 1 || user > 9)
+                    {
+                        Console.Write("||--- You Must Select Place Between ");
+                        EmptySpaces.ShowSpaces(board, RemainingPlaces);
+                        Console.Write("---||\n");
+                        continue;
+                    }
+
+                    row = (user - 1) / 3;
+                    col = (user - 1) % 3;
+
+                    if (board[row, col] != '-')
+                    {
+                        Console.WriteLine("That place is already filled. Choose another.");
+                        continue;
                     }
                     break;
                 }
-            }
 
-            Console.WriteLine("Your Selected Place:- "+user);
-            steps++;
+                Console.WriteLine("Your Selected Place:- " + user);
+                UserSelection.ShowUserInput(board, user);
 
-            if(user == 1){
-                board[0,0] = 'X';
-            }else if(user == 2){
-                board[0,1] = 'X';
-            }else if(user == 3){
-                board[0,2] = 'X';
-            }else if(user == 4){
-                board[1,0] = 'X';
-            }else if(user == 5){
-                board[1,1] = 'X';
-            }else if(user == 6){
-                board[1,2] = 'X';
-            }else if(user == 7){
-                board[2,0] = 'X';
-            }else if(user == 8){
-                board[2,1] = 'X';
-            }else if(user == 9){
-                board[2,2] = 'X';
-            }
-
-            for(i=0;i<3;i++){
-                for(j=0;j<3;j++){
-                    Console.Write(board[i,j]+" ");
+                moves++;
+                boardplaces.showboard(board);
+                if (gameChecker.CheckWinner(board))
+                {
+                    gameOver = true;
+                    break; 
                 }
-                Console.WriteLine();
+                userTurn = false;
             }
-    
-            Console.WriteLine();
-    
-            computer = rand.Next(1, 10);
-            Console.WriteLine("Computer Selected Place:- "+computer);
-            steps++;   
+            else
+            {
+                Console.Write("\nRemaining Places:- ");
+                int remainingCount = EmptySpaces.ShowSpaces(board, RemainingPlaces);
+
+                if (remainingCount == 0)
+                {
+                    break;
+                }
+
+                int computer = RemainingPlaces[rand.Next(remainingCount)];
+
+                Console.WriteLine("\nComputer Selected Place:- " + computer);
+                ComputerSelection.ShowComputerInput(board, computer);
+
+                moves++;
+                boardplaces.showboard(board);
+                if (gameChecker.CheckWinner(board))
+                {
+                    gameOver = true;
+                    break;
+                }
+                userTurn = true;
+            }
+
+            if (!gameOver && moves == 9)
+            {
+                Console.WriteLine("\n*** It's A Draw! ***");
+            }
         }
     }
 }
